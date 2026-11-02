@@ -3,6 +3,8 @@
 # Discord RPC
 ### A polished glass UI Electron app for Discord Rich Presence
 
+![Preview](image.png)
+
 [![GitHub release](https://img.shields.io/github/v/release/kiwizariudev/discord-rpc?style=flat-square&color=5865F2)](https://github.com/kiwizariudev/discord-rpc/releases)
 [![License](https://img.shields.io/github/license/kiwizariudev/discord-rpc?style=flat-square&color=5865F2)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/kiwizariudev/discord-rpc?style=flat-square&color=5865F2)](https://github.com/kiwizariudev/discord-rpc/stargazers)
