@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discord RPC</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../src/style.css" />
+</head>
+<body>
+  <div class="bg-video-wrap">
+    <video class="bg-video" autoplay loop muted playsinline disablepictureinpicture>
+      <source src="local://assets/bg.mp4" type="video/mp4" />
+    </video>
+    <div class="bg-video-overlay"></div>
+  </div>
+
+  <div class="app-window">
+    <!-- Title Bar -->
+    <div class="title-bar" id="titleBar">
+      <div class="title-bar-left">
+        <div class="app-icon">
+          <i class="fa-brands fa-discord"></i>
+        </div>
+        <span class="app-title">Discord RPC</span>
+      </div>
+      <div class="title-bar-right">
+        <button class="win-btn minimize-btn" id="minimizeBtn" title="Minimize">
+          <i class="fa-solid fa-minus"></i>
+        </button>
+        <button class="win-btn close-btn" id="closeBtn" title="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <div class="status-indicator" id="statusIndicator">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">Disconnected</span>
+      </div>
+      <div class="uptime-badge" id="uptimeBadge" style="display:none;">
+        <i class="fa-regular fa-clock"></i>
+        <span id="uptimeText">00:00:00</span>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+      <!-- Sidebar Nav -->
+      <nav class="sidebar">
+        <button class="nav-btn active" data-tab="connection">
+          <i class="fa-solid fa-plug"></i>
+          <span>Connection</span>
+        </button>
+        <button class="nav-btn" data-tab="presence">
+          <i class="fa-solid fa-id-badge"></i>
+          <span>Presence</span>
+        </button>
+        <button class="nav-btn" data-tab="images">
+          <i class="fa-solid fa-image"></i>
+          <span>Images</span>
+        </button>
+        <button class="nav-btn" data-tab="buttons">
+          <i class="fa-solid fa-square-up-right"></i>
+          <span>Buttons</span>
+        </button>
+        <button class="nav-btn" data-tab="presets">
+          <i class="fa-solid fa-layer-group"></i>
+          <span>Presets</span>
+        </button>
+      </nav>
+
+      <!-- Tab Panels -->
+      <div class="panels">
+
+        <!-- CONNECTION TAB -->
+        <div class="panel active" id="tab-connection">
+          <div class="panel-header">
+            <i class="fa-solid fa-plug panel-icon"></i>
+            <div>
+              <h2>Connection</h2>
+              <p>Enter your Discord Application Client ID</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="field-label">
+              <i class="fa-solid fa-key"></i>
+              Client ID (Bot / Application ID)
+            </label>
+            <div class="input-wrap">
+              <input
+                type="text"
+                id="clientId"
+                class="glass-input"
+                placeholder="e.g. 1234567890123456789"
+                maxlength="32"
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <div class="input-hint" id="clientIdHint"></div>
+            </div>
+            <p class="field-desc">
+              <i class="fa-solid fa-circle-info"></i>
+              Find this in the <strong>Discord Developer Portal</strong> under your application.
+            </p>
+          </div>
+
+          <div class="info-card">
+            <i class="fa-solid fa-lightbulb card-icon"></i>
+            <div class="card-body">
+              <strong>How to get your Client ID</strong>
+              <ol>
+                <li>Go to <span class="highlight">discord.com/developers/applications</span></li>
+                <li>Select or create an application</li>
+                <li>Copy the <span class="highlight">Application ID</span> from General Information</li>
+                <li>Make sure Rich Presence is enabled</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRESENCE TAB -->
+        <div class="panel" id="tab-presence">
+          <div class="panel-header">
+            <i class="fa-solid fa-id-badge panel-icon"></i>
+            <div>
+              <h2>Presence</h2>
+              <p>Customize what Discord displays</p>
+            </div>
+          </div>
+
+          <!-- Activity Type -->
+          <div class="form-group">
+            <label class="field-label">
+              <i class="fa-solid fa-gamepad"></i>
+              Activity Type
+            </label>
+            <div class="select-wrap">
+              <select id="activityType" class="glass-select">
+                <option value="0">Playing</option>
+                <option value="1">Streaming</option>
+                <option value="2">Listening</option>
+                <option value="3">Watching</option>
+                <option value="5">Competing</option>
+              </select>
+              <i class="fa-solid fa-chevron-down select-arrow"></i>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="field-label">
+                <i class="fa-solid fa-align-left"></i>
+                Details (line 1)
+              </label>
+              <input type="text" id="details" class="glass-input" placeholder="Playing something cool..." maxlength="128" />
+            </div>
+            <div class="form-group">
+              <label class="field-label">
+                <i class="fa-solid fa-align-right"></i>
+                State (line 2)
+              </label>
+              <input type="text" id="state" class="glass-input" placeholder="In a match..." maxlength="128" />
+            </div>
+          </div>
+
+          <div class="form-group toggle-group">
+            <label class="field-label">
+              <i class="fa-regular fa-clock"></i>
+              Elapsed Timer
+            </label>
+            <label class="toggle-switch">
+              <input type="checkbox" id="showTimestamp" checked />
+              <span class="toggle-track">
+                <span class="toggle-thumb"></span>
+              </span>
+            </label>
+            <span class="toggle-label" id="timestampLabel">Enabled</span>
+          </div>
+
+          <!-- Live Preview -->
+          <div class="preview-card">
+            <div class="preview-header">
+              <i class="fa-solid fa-eye"></i>
+              Live Preview
+            </div>
+            <div class="discord-preview">
+              <div class="preview-label">PLAYING A GAME</div>
+              <div class="preview-images">
+                <div class="preview-large-img" id="previewLargeImg">
+                  <i class="fa-brands fa-discord"></i>
+                </div>
+                <div class="preview-small-img" id="previewSmallImg" style="display:none;">
+                  <i class="fa-solid fa-circle-dot"></i>
+                </div>
+              </div>
+              <div class="preview-text">
+                <div class="preview-app-name">Your App</div>
+                <div class="preview-details" id="previewDetails">Details will appear here</div>
+                <div class="preview-state" id="previewState">State will appear here</div>
+                <div class="preview-time" id="previewTime" style="display:none;">
+                  <i class="fa-regular fa-clock"></i>
+                  <span>00:00 elapsed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- IMAGES TAB -->
+        <div class="panel" id="tab-images">
+          <div class="panel-header">
+            <i class="fa-solid fa-image panel-icon"></i>
+            <div>
+              <h2>Images</h2>
+              <p>Set artwork keys or image IDs from your Discord app</p>
+            </div>
+          </div>
+
+          <!-- Source toggle -->
+          <div class="img-source-toggle">
+            <button class="source-btn active" data-source="key">
+              <i class="fa-solid fa-key"></i>
+              Art Asset Key
+            </button>
+            <button class="source-btn" data-source="id">
+              <i class="fa-solid fa-fingerprint"></i>
+              Image ID
+            </button>
+          </div>
+
+          <!-- Key mode -->
+          <div class="img-mode" id="imgModeKey">
+            <div class="img-section-card">
+              <div class="img-section-title">
+                <i class="fa-solid fa-image"></i>
+                Large Image
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="field-label"><i class="fa-solid fa-key"></i> Key</label>
+                  <input type="text" id="largeImageKey" class="glass-input" placeholder="e.g. large_art" />
+                </div>
+                <div class="form-group">
+                  <label class="field-label"><i class="fa-regular fa-message"></i> Tooltip</label>
+                  <input type="text" id="largeImageText" class="glass-input" placeholder="Hover text..." maxlength="128" />
+                </div>
+              </div>
+            </div>
+            <div class="img-section-card">
+              <div class="img-section-title">
+                <i class="fa-solid fa-circle-dot"></i>
+                Small Image
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="field-label"><i class="fa-solid fa-key"></i> Key</label>
+                  <input type="text" id="smallImageKey" class="glass-input" placeholder="e.g. small_icon" />
+                </div>
+                <div class="form-group">
+                  <label class="field-label"><i class="fa-regular fa-message"></i> Tooltip</label>
+                  <input type="text" id="smallImageText" class="glass-input" placeholder="Hover text..." maxlength="128" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ID mode -->
+          <div class="img-mode" id="imgModeId" style="display:none;">
+            <div class="img-section-card">
+              <div class="img-section-title">
+                <i class="fa-solid fa-image"></i>
+                Large Image
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="field-label"><i class="fa-solid fa-fingerprint"></i> Image ID</label>
+                  <input type="text" id="largeImageId" class="glass-input" placeholder="e.g. 1234567890123456789" autocomplete="off" spellcheck="false" />
+                </div>
+                <div class="form-group">
+                  <label class="field-label"><i class="fa-regular fa-message"></i> Tooltip</label>
+                  <input type="text" id="largeImageTextId" class="glass-input" placeholder="Hover text..." maxlength="128" />
+                </div>
+              </div>
+            </div>
+            <div class="img-section-card">
+              <div class="img-section-title">
+                <i class="fa-solid fa-circle-dot"></i>
+                Small Image
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="field-label"><i class="fa-solid fa-fingerprint"></i> Image ID</label>
+                  <input type="text" id="smallImageId" class="glass-input" placeholder="e.g. 9876543210987654321" autocomplete="off" spellcheck="false" />
+                </div>
+                <div class="form-group">
+                  <label class="field-label"><i class="fa-regular fa-message"></i> Tooltip</label>
+                  <input type="text" id="smallImageTextId" class="glass-input" placeholder="Hover text..." maxlength="128" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <i class="fa-solid fa-circle-info card-icon"></i>
+            <div class="card-body">
+              <strong>Art Asset Key vs Image ID</strong>
+              <p><span class="highlight">Key</span> — name of an image uploaded in Rich Presence Art Assets on the Developer Portal.<br/>
+              <span class="highlight">ID</span> — the raw snowflake ID of any image asset from your application.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- BUTTONS TAB -->
+        <div class="panel" id="tab-buttons">
+          <div class="panel-header">
+            <i class="fa-solid fa-square-up-right panel-icon"></i>
+            <div>
+              <h2>Buttons</h2>
+              <p>Add up to 2 clickable buttons to your presence</p>
+            </div>
+          </div>
+
+          <div class="button-card">
+            <div class="button-card-header">
+              <div class="button-num">1</div>
+              <span>Button 1</span>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="field-label">
+                  <i class="fa-solid fa-tag"></i>
+                  Label
+                </label>
+                <input type="text" id="button1Label" class="glass-input" placeholder="Visit Website" maxlength="32" />
+              </div>
+              <div class="form-group">
+                <label class="field-label">
+                  <i class="fa-solid fa-link"></i>
+                  URL
+                </label>
+                <input type="url" id="button1Url" class="glass-input" placeholder="https://..." />
+              </div>
+            </div>
+          </div>
+
+          <div class="button-card">
+            <div class="button-card-header">
+              <div class="button-num">2</div>
+              <span>Button 2</span>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="field-label">
+                  <i class="fa-solid fa-tag"></i>
+                  Label
+                </label>
+                <input type="text" id="button2Label" class="glass-input" placeholder="Join Server" maxlength="32" />
+              </div>
+              <div class="form-group">
+                <label class="field-label">
+                  <i class="fa-solid fa-link"></i>
+                  URL
+                </label>
+                <input type="url" id="button2Url" class="glass-input" placeholder="https://..." />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRESETS TAB -->
+        <div class="panel" id="tab-presets">
+          <div class="panel-header">
+            <i class="fa-solid fa-layer-group panel-icon"></i>
+            <div>
+              <h2>Presets</h2>
+              <p>Ready-made Rich Presence profiles — click one to load it</p>
+            </div>
+          </div>
+
+          <div class="presets-grid">
+
+            <!-- Valorant Preset -->
+            <div class="preset-card" id="preset-valorant">
+              <div class="preset-banner">
+                <img src="local://assets/presets/val_banner.png" alt="Valorant" class="preset-banner-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+                <div class="preset-banner-fallback" style="display:none;">
+                  <i class="fa-solid fa-crosshairs"></i>
+                  <span>VALORANT</span>
+                </div>
+                <div class="preset-game-tag">
+                  <i class="fa-solid fa-crosshairs"></i>
+                  Valorant
+                </div>
+              </div>
+              <div class="preset-body">
+                <div class="preset-info-row">
+                  <div class="preset-info-item">
+                    <span class="preset-info-label">Details</span>
+                    <span class="preset-info-val">Playing Valorant</span>
+                  </div>
+                  <div class="preset-info-item">
+                    <span class="preset-info-label">State</span>
+                    <span class="preset-info-val">In a match</span>
+                  </div>
+                </div>
+                <div class="preset-info-row">
+                  <div class="preset-info-item">
+                    <span class="preset-info-label">Large image</span>
+                    <span class="preset-info-val preset-img-preview">
+                      <img src="local://assets/presets/val_banner.png" class="preset-thumb" onerror="this.style.display='none'" />
+                      val_banner
+                    </span>
+                  </div>
+                  <div class="preset-info-item">
+                    <span class="preset-info-label">Small image</span>
+                    <span class="preset-info-val preset-img-preview">
+                      <img src="local://assets/presets/val_logo.png" class="preset-thumb" onerror="this.style.display='none'" />
+                      val_logo
+                    </span>
+                  </div>
+                </div>
+                <div class="preset-actions">
+                  <button class="preset-use-btn" data-preset="valorant">
+                    <i class="fa-solid fa-bolt"></i>
+                    Use Preset
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="info-card">
+            <i class="fa-solid fa-circle-info card-icon"></i>
+            <div class="card-body">
+              <strong>Using a preset</strong>
+              <p>Click <span class="highlight">Use Preset</span> to fill all fields automatically. Make sure your Client ID is set in the Connection tab, then press Start RPC.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Footer Action Bar -->
+    <div class="footer-bar">
+      <div class="footer-left">
+        <div class="log-wrap">
+          <i class="fa-solid fa-terminal"></i>
+          <span id="logMessage">Ready — fill in your settings and press Start.</span>
+        </div>
+      </div>
+      <div class="footer-right">
+        <button class="action-btn clear-btn" id="clearBtn">
+          <i class="fa-solid fa-rotate-left"></i>
+          Reset
+        </button>
+        <button class="action-btn start-btn" id="startBtn">
+          <i class="fa-solid fa-play" id="startBtnIcon"></i>
+          <span id="startBtnText">Start RPC</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="../src/renderer.js"></script>
+</body>
+</html>
